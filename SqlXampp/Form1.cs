@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Asn1.Cmp;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System;
 using System.Collections.Generic;
@@ -23,42 +24,58 @@ namespace SqlXampp
             InitializeComponent();
             this.KeyPreview = true;
             this.KeyDown += new KeyEventHandler(Form1_KeyDown);
+            LoadGames();
         }
+
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                InsertStudent();
+                Control ctrl = this.ActiveControl;
+
+                // If last field (cmbStatus), insert to database
+                if (ctrl == cmbStatus)
+                {
+                    InsertGame();
+                    LoadGames();
+                }
+                else
+                {
+                    // Move focus to next control
+                    this.SelectNextControl(ctrl, true, true, true, true);
+                }
+
                 e.Handled = true;
-                e.SuppressKeyPress = true; // prevent beep sound
+                e.SuppressKeyPress = true; // prevent beep
             }
         }
 
-        private void InsertStudent()
+        private void InsertGame()
         {
             try
             {
-                string query = "INSERT INTO students " +
-                               "(student_no, last_name, first_name, middle_name, gender, birthday, birthplace, course_year, department) " +
-                               "VALUES (@student_no, @last_name, @first_name, @middle_name, @gender, @birthday, @birthplace, @course_year, @department)";
+                string query = "INSERT INTO games " +
+                               "(title, genre, platform, release_date, developer, publisher, rating, status, multiplayer) " +
+                               "VALUES (@title, @genre, @platform, @release_date, @developer, @publisher, @rating, @status, @multiplayer)";
 
                 MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
 
-                cmd.Parameters.AddWithValue("@student_no", txtStudentNo.Text);
-                cmd.Parameters.AddWithValue("@last_name", txtLastName.Text);
-                cmd.Parameters.AddWithValue("@first_name", txtFirstName.Text);
-                cmd.Parameters.AddWithValue("@middle_name", txtMiddleName.Text);
-                cmd.Parameters.AddWithValue("@gender", txtMiddleName.Text);  // ComboBox for Gender
-                cmd.Parameters.AddWithValue("@birthday", dtpBirthday.Value); // DateTimePicker
-                cmd.Parameters.AddWithValue("@birthplace", txtBirthPlace.Text);
-                cmd.Parameters.AddWithValue("@course_year", txtCourseYear.Text);
-                cmd.Parameters.AddWithValue("@department", cmbDepartment.Text); // ComboBox for Department
+                cmd.Parameters.AddWithValue("@title", txtTitle.Text);
+                cmd.Parameters.AddWithValue("@genre", cmbGenre.Text);
+                cmd.Parameters.AddWithValue("@platform", cmbPlatform.Text);
+                cmd.Parameters.AddWithValue("@release_date", dtpReleaseDate.Value);
+                cmd.Parameters.AddWithValue("@developer", txtDeveloper.Text);
+                cmd.Parameters.AddWithValue("@publisher", txtPublisher.Text);
+                cmd.Parameters.AddWithValue("@rating", cmbRating.Text);
+                cmd.Parameters.AddWithValue("@status", cmbStatus.Text);
+                cmd.Parameters.AddWithValue("@multiplayer", cmbMultiplayer.Text);
 
                 mySqlConnection.Open();
                 cmd.ExecuteNonQuery();
                 mySqlConnection.Close();
 
-                MessageBox.Show("Student info added successfully!");
+                MessageBox.Show("Game added successfully!");
             }
             catch (Exception ex)
             {
@@ -67,6 +84,26 @@ namespace SqlXampp
                     mySqlConnection.Close();
             }
         }
+
+        private void LoadGames()
+        {
+            try
+            {
+                string query = "SELECT * FROM games";
+                MySqlDataAdapter adapter = new MySqlDataAdapter(query, mySqlConnection);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                dataGridView1.DataSource = dt;
+
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading games: " + ex.Message);
+            }
+        }
+
+
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -77,5 +114,75 @@ namespace SqlXampp
         {
 
         }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                txtTitle.Text = row.Cells["title"].Value.ToString();
+                cmbGenre.Text = row.Cells["genre"].Value.ToString();
+                cmbPlatform.Text = row.Cells["platform"].Value.ToString();
+                dtpReleaseDate.Value = Convert.ToDateTime(row.Cells["release_date"].Value);
+                txtDeveloper.Text = row.Cells["developer"].Value.ToString();
+                txtPublisher.Text = row.Cells["publisher"].Value.ToString();
+                cmbRating.Text = row.Cells["rating"].Value.ToString();
+                cmbStatus.Text = row.Cells["status"].Value.ToString();
+                cmbMultiplayer.Text = row.Cells["multiplayer"].Value.ToString();
+            }
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridView1.CurrentRow == null) return;
+
+                int gameId = Convert.ToInt32(dataGridView1.CurrentRow.Cells["game_id"].Value);
+
+                string query = "UPDATE games SET " +
+                               "title=@title, genre=@genre, platform=@platform, release_date=@release_date, " +
+                               "developer=@developer, publisher=@publisher, rating=@rating, status=@status, multiplayer=@multiplayer " +
+                               "WHERE game_id=@game_id";
+
+                MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+
+                cmd.Parameters.AddWithValue("@title", txtTitle.Text);
+                cmd.Parameters.AddWithValue("@genre", cmbGenre.Text);
+                cmd.Parameters.AddWithValue("@platform", cmbPlatform.Text);
+                cmd.Parameters.AddWithValue("@release_date", dtpReleaseDate.Value);
+                cmd.Parameters.AddWithValue("@developer", txtDeveloper.Text);
+                cmd.Parameters.AddWithValue("@publisher", txtPublisher.Text);
+                cmd.Parameters.AddWithValue("@rating", cmbRating.Text);
+                cmd.Parameters.AddWithValue("@status", cmbStatus.Text);
+                cmd.Parameters.AddWithValue("@multiplayer", cmbMultiplayer.Text);
+                cmd.Parameters.AddWithValue("@game_id", gameId);
+
+                mySqlConnection.Open();
+                cmd.ExecuteNonQuery();
+                mySqlConnection.Close();
+
+                MessageBox.Show("Game updated successfully!");
+                LoadGames();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating game: " + ex.Message);
+                if (mySqlConnection.State == ConnectionState.Open)
+                    mySqlConnection.Close();
+            }
+        
+    }
     }
 }
