@@ -9,6 +9,7 @@ namespace SqlXampp
     public partial class Form1 : Form
     {
         MySqlConnection mySqlConnection = new MySqlConnection("server=127.0.0.1;user=root;database=sample; password=");
+        private int? selectedGameId = null;
 
         public Form1()
         {
@@ -86,22 +87,86 @@ namespace SqlXampp
             {
                 Control ctrl = this.ActiveControl;
 
-                
                 if (ctrl == cmbStatus)
                 {
-                    InsertGame();
+                    if (selectedGameId == null)
+                        InsertGame();
+                    else
+                        UpdateGame();
                 }
                 else
                 {
-                    // Move focus to next control
                     this.SelectNextControl(ctrl, true, true, true, true);
                 }
 
                 e.Handled = true;
-                e.SuppressKeyPress = true; // prevent beep
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                ResetForm();
+            }
+            else if (e.Control && e.KeyCode == Keys.D)
+            {
+                DeleteGame();
             }
 
         }
+
+        private void DeleteGame()
+        {
+            if (selectedGameId == null)
+            {
+                MessageBox.Show("Please select a game to delete.");
+                return;
+            }
+
+            DialogResult dr = MessageBox.Show("Are you sure you want to delete this game?",
+                                              "Confirm Delete",
+                                              MessageBoxButtons.YesNo,
+                                              MessageBoxIcon.Warning);
+
+            if (dr == DialogResult.Yes)
+            {
+                try
+                {
+                    string query = "DELETE FROM games WHERE game_id=@game_id";
+                    MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                    cmd.Parameters.AddWithValue("@game_id", selectedGameId);
+
+                    mySqlConnection.Open();
+                    cmd.ExecuteNonQuery();
+                    mySqlConnection.Close();
+
+                    MessageBox.Show("Game deleted successfully!");
+                    LoadGames();
+                    ResetForm(); // clear inputs
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error deleting game: " + ex.Message);
+                    if (mySqlConnection.State == ConnectionState.Open)
+                        mySqlConnection.Close();
+                }
+            }
+        }
+
+
+        private void ResetForm()
+        {
+            txtTitle.Clear();
+            cmbGenre.SelectedIndex = -1;
+            cmbPlatform.SelectedIndex = -1;
+            dtpReleaseDate.Value = DateTime.Now;
+            txtDeveloper.Clear();
+            txtPublisher.Clear();
+            cmbRating.SelectedIndex = -1;
+            cmbStatus.SelectedIndex = -1;
+            cmbMultiplayer.SelectedIndex = -1;
+
+            selectedGameId = null; // back to Insert mode
+        }
+
 
         private void InsertGame()
         {
@@ -159,9 +224,11 @@ namespace SqlXampp
         
         private void DataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0) // ignore header row
+            if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                selectedGameId = Convert.ToInt32(row.Cells["game_id"].Value);
 
                 txtTitle.Text = row.Cells["title"].Value.ToString();
                 cmbGenre.Text = row.Cells["genre"].Value.ToString();
@@ -180,19 +247,11 @@ namespace SqlXampp
             
         }
 
-        
-        private void txtSearch_TextChanged(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void BtnUpdate_Click(object sender, EventArgs e)
+        private void UpdateGame()
         {
             try
             {
-                if (dataGridView1.CurrentRow == null) return;
-
-                int gameId = Convert.ToInt32(dataGridView1.CurrentRow.Cells["game_id"].Value);
+                if (selectedGameId == null) return;
 
                 string query = "UPDATE games SET " +
                                "title=@title, genre=@genre, platform=@platform, release_date=@release_date, " +
@@ -210,7 +269,7 @@ namespace SqlXampp
                 cmd.Parameters.AddWithValue("@rating", cmbRating.Text);
                 cmd.Parameters.AddWithValue("@status", cmbStatus.Text);
                 cmd.Parameters.AddWithValue("@multiplayer", cmbMultiplayer.Text);
-                cmd.Parameters.AddWithValue("@game_id", gameId);
+                cmd.Parameters.AddWithValue("@game_id", selectedGameId);
 
                 mySqlConnection.Open();
                 cmd.ExecuteNonQuery();
@@ -218,6 +277,8 @@ namespace SqlXampp
 
                 MessageBox.Show("Game updated successfully!");
                 LoadGames();
+
+                selectedGameId = null; // reset back to insert mode
             }
             catch (Exception ex)
             {
@@ -227,7 +288,24 @@ namespace SqlXampp
             }
         }
 
+
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void BtnUpdate_Click(object sender, EventArgs e)
+        {
+            
+        }
+
         private void btnSearch_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbMultiplayer_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
