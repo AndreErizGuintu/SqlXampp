@@ -156,6 +156,7 @@
             // 
             // dtpReleaseDate
             // 
+            this.dtpReleaseDate.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpReleaseDate.Location = new System.Drawing.Point(502, 41);
             this.dtpReleaseDate.Name = "dtpReleaseDate";
             this.dtpReleaseDate.Size = new System.Drawing.Size(285, 20);
@@ -163,6 +164,7 @@
             // 
             // txtPublisher
             // 
+            this.txtPublisher.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPublisher.Location = new System.Drawing.Point(502, 95);
             this.txtPublisher.Name = "txtPublisher";
             this.txtPublisher.Size = new System.Drawing.Size(285, 20);
@@ -170,6 +172,7 @@
             // 
             // txtDeveloper
             // 
+            this.txtDeveloper.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDeveloper.Location = new System.Drawing.Point(502, 68);
             this.txtDeveloper.Name = "txtDeveloper";
             this.txtDeveloper.Size = new System.Drawing.Size(285, 20);
@@ -177,6 +180,7 @@
             // 
             // cmbRating
             // 
+            this.cmbRating.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbRating.FormattingEnabled = true;
             this.cmbRating.Items.AddRange(new object[] {
             "1",
@@ -188,9 +192,11 @@
             this.cmbRating.Name = "cmbRating";
             this.cmbRating.Size = new System.Drawing.Size(252, 21);
             this.cmbRating.TabIndex = 3;
+            this.cmbRating.Text = "==Please Select==";
             // 
             // cmbStatus
             // 
+            this.cmbStatus.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbStatus.FormattingEnabled = true;
             this.cmbStatus.Items.AddRange(new object[] {
             "Playing",
@@ -201,9 +207,11 @@
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(285, 21);
             this.cmbStatus.TabIndex = 8;
+            this.cmbStatus.Text = "==Please Select==";
             // 
             // txtTitle
             // 
+            this.txtTitle.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtTitle.Location = new System.Drawing.Point(115, 43);
             this.txtTitle.Name = "txtTitle";
             this.txtTitle.Size = new System.Drawing.Size(252, 20);
@@ -235,6 +243,7 @@
             // 
             // cmbGenre
             // 
+            this.cmbGenre.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbGenre.FormattingEnabled = true;
             this.cmbGenre.Items.AddRange(new object[] {
             "RPG",
@@ -247,9 +256,11 @@
             this.cmbGenre.Name = "cmbGenre";
             this.cmbGenre.Size = new System.Drawing.Size(252, 21);
             this.cmbGenre.TabIndex = 1;
+            this.cmbGenre.Text = "==Please Select==";
             // 
             // cmbPlatform
             // 
+            this.cmbPlatform.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbPlatform.FormattingEnabled = true;
             this.cmbPlatform.Items.AddRange(new object[] {
             "PC",
@@ -261,9 +272,11 @@
             this.cmbPlatform.Name = "cmbPlatform";
             this.cmbPlatform.Size = new System.Drawing.Size(252, 21);
             this.cmbPlatform.TabIndex = 2;
+            this.cmbPlatform.Text = "==Please Select==";
             // 
             // cmbMultiplayer
             // 
+            this.cmbMultiplayer.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbMultiplayer.FormattingEnabled = true;
             this.cmbMultiplayer.Items.AddRange(new object[] {
             "Yes",
@@ -272,6 +285,7 @@
             this.cmbMultiplayer.Name = "cmbMultiplayer";
             this.cmbMultiplayer.Size = new System.Drawing.Size(252, 21);
             this.cmbMultiplayer.TabIndex = 4;
+            this.cmbMultiplayer.Text = "==Please Select==";
             this.cmbMultiplayer.SelectedIndexChanged += new System.EventHandler(this.cmbMultiplayer_SelectedIndexChanged);
             // 
             // mySqlDataAdapter1
@@ -360,6 +374,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);

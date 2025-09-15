@@ -3,7 +3,6 @@ using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Data;
 using System.Windows.Forms;
-
 namespace SqlXampp
 {
     public partial class Form1 : Form
@@ -20,9 +19,38 @@ namespace SqlXampp
             this.KeyDown += new KeyEventHandler(Form1_KeyDown);
 
             dataGridView1.CellClick += DataGridView1_CellClick;
-            btnUpdate.Click += BtnUpdate_Click;
+         
         }
-        
+        private void LoadComboBox(ComboBox combo, string comboName)
+        {
+            try
+            {
+                combo.Items.Clear();
+
+                string query = "SELECT option_value FROM combobox_options WHERE combo_name=@comboName";
+                MySqlCommand cmd = new MySqlCommand(query, mySqlConnection);
+                cmd.Parameters.AddWithValue("@comboName", comboName);
+
+                mySqlConnection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    combo.Items.Add(reader["option_value"].ToString());
+                }
+
+                reader.Close();
+                mySqlConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading " + comboName + " values: " + ex.Message);
+                if (mySqlConnection.State == ConnectionState.Open)
+                    mySqlConnection.Close();
+            }
+        }
+
+
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -42,8 +70,15 @@ namespace SqlXampp
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadGames();
-            txtSearch.TextChanged += TxtSearch_TextChanged; 
-            
+            txtSearch.TextChanged += TxtSearch_TextChanged;
+            LoadComboBox(cmbGenre, "genre");
+            LoadComboBox(cmbPlatform, "platform");
+            LoadComboBox(cmbStatus, "status");
+            LoadComboBox(cmbMultiplayer, "multiplayer");
+            LoadComboBox(cmbRating, "rating");
+
+            LoadGames(); // your DataGridView
+
         }
 
 
